@@ -103,7 +103,6 @@ The future of AI holds immense potential for innovation and transformation acros
 As AI continues to evolve, it's essential to stay informed about its advancements and consider how it can be leveraged responsibly. By understanding the trends, applications, and ethical considerations, we can harness the power of AI to drive innovation and improve our lives. Subscribe to our blog for regular updates and insights into the world of AI.
 
 ## References
-<div class="references">
 - [OpenAI](https://www.openai.com)
 - [MIT Technology Review](https://www.technologyreview.com/tag/artificial-intelligence/)
 - [Journal of Artificial Intelligence Research](https://www.jair.org/index.php/jair)
@@ -117,4 +116,3 @@ As AI continues to evolve, it's essential to stay informed about its advancement
 - [Nature Machine Intelligence](https://www.nature.com/natmachintell/)
 - [TechCrunch](https://techcrunch.com/tag/artificial-intelligence/)
 - [PwC AI Predictions](https://www.pwc.com/gx/en/issues/technology/ai-analysis.html)
-</div>

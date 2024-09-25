@@ -4,5 +4,5 @@ Whatever I am interested in learning goes in here. I am hoping the list keep gro
 # Table of Sections
 
 - [ML Tutorial](docs/ml/index.html)
-- [Article Written by Multi AI Agents - CrewAI](ml/article.html)
+- [Article Written by Multi AI Agents - CrewAI](docs/ml/article.html)
 

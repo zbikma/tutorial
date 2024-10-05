@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying AWS Lambda Functions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body class="container mt-4">
+    <h1>Deploying AWS Lambda Functions: A Comprehensive Guide</h1>
+
+    <section class="mb-5">
+        <h2>Introduction</h2>
+        <p>
+            AWS Lambda allows you to run code without provisioning or managing servers. This article covers three
+            popular methods to deploy AWS Lambda functions: through the AWS Management Console, the AWS CLI, and using
+            the AWS Serverless Application Model (SAM).
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h2>1. AWS Management Console</h2>
+        <p>Deploying a Lambda function through the AWS Management Console is straightforward, making it ideal for quick
+            deployments and testing.</p>
+        <ol>
+            <li>Log in to the AWS Management Console and navigate to the Lambda service page.</li>
+            <li>Click "Create function", choose "Author from scratch", enter a function name, choose a runtime, and set
+                up permissions.</li>
+            <li>Add environment variables and configure settings like memory and timeout under the "Configuration" tab.
+            </li>
+            <li>Upload your code either directly in the editor or as a .zip file.</li>
+            <li>Deploy your function by clicking "Deploy".</li>
+            <li>Test your function with configured test events.</li>
+        </ol>
+        <pre><code>import json
+
+def lambda_handler(event, context):
+    print("Welcome to AWS Lambda!")
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
+        </code></pre>
+    </section>
+
+    <section class="mb-5">
+        <h2>2. AWS CLI</h2>
+        <p>The AWS CLI is efficient for automation and CI/CD processes.</p>
+        <ol>
+            <li>Install and configure the AWS CLI, then run <code>aws configure</code> to set up your credentials.</li>
+            <li>Package your Lambda function code into a .zip file.</li>
+            <li>Create the Lambda function using the <code>create-function</code> CLI command.</li>
+            <li>Update the function as needed with the <code>update-function-code</code> command.</li>
+        </ol>
+        <pre><code>aws lambda create-function --function-name MyLambdaFunction \
+  --runtime python3.8 --role arn:aws:iam::123456789012:role/lambda-role \
+  --handler lambda_function.lambda_handler --zip-file fileb://function.zip
+
+aws lambda update-function-code --function-name MyLambdaFunction --zip-file fileb://function.zip
+        </code></pre>
+    </section>
+
+    <section class="mb-5">
+        <h2>3. AWS Serverless Application Model (SAM)</h2>
+        <p>AWS SAM simplifies deploying serverless applications using configuration files.</p>
+        <ol>
+            <li>Install AWS SAM and set up a SAM project with a template file.</li>
+            <li>Define your resources and settings in the SAM template.</li>
+            <li>Build your application with <code>sam build</code>.</li>
+            <li>Deploy your application using <code>sam deploy</code>.</li>
+        </ol>
+        <pre><code>sam build
+sam deploy
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Conclusion</h2>
+        <p>
+            Each deployment method has its advantages depending on your project needs. Whether you prefer a GUI approach
+            with the Management Console, automation via the CLI, or using a declarative framework with SAM, AWS provides
+            versatile options for deploying Lambda functions effectively.
+        </p>
+    </section>
+</body>
+
+</html>

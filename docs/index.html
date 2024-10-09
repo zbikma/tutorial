@@ -223,6 +223,7 @@
             $('.load-content').click(function (e) {
                 e.preventDefault();
                 var url = $(this).attr('href');
+                window.location.hash = url;
                 $('#main-content').html('<p>Loading...</p>');
                 $('#main-content').load(url, function (response, status, xhr) {
                     if (status == "error") {
@@ -230,6 +231,17 @@
                     }
                 });
             });
+
+            // Load content based on URL hash
+            if (window.location.hash) {
+                var hashUrl = window.location.hash.substring(1);
+                $('#main-content').html('<p>Loading...</p>');
+                $('#main-content').load(hashUrl, function (response, status, xhr) {
+                    if (status == "error") {
+                        $('#main-content').html('<p>Error loading content. Please try again later.</p>');
+                    }
+                });
+            }
         });
     </script>
 </body>

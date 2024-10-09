@@ -6,40 +6,183 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Articles Table of Contents</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .level-1 {
+            color: #1f77b4;
+        }
+
+        .level-2 {
+            color: #ff7f0e;
+        }
+
+        .level-3 {
+            color: #2ca02c;
+        }
+
+        #hamburger-menu {
+            background-color: #fff;
+            border: none;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            left: 0;
+            z-index: 1000;
+        }
+
+        #hamburger-menu .fa-bars {
+            font-size: 20px;
+            padding: 5px;
+            color: #333;
+        }
+
+        #toc-nav {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            /* Initially hidden off-screen */
+            height: 100%;
+            width: 300px;
+            background-color: #f8f9fa;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            padding-top: 60px;
+            z-index: 999;
+            transition: left 0.5s ease;
+            /* Smooth animation for sliding */
+        }
+
+        #toc-nav.visible {
+            left: 0;
+            /* When visible, bring to view */
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto 1fr 3fr;
+            grid-template-rows: auto 1fr;
+            gap: 10px;
+            margin-top: 60px;
+        }
+
+        .grid-container .toc-row {
+            grid-column: 1 / span 2;
+        }
+
+        .toggle-icon {
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .level-1 a,
+        .level-2 a,
+        .level-3 a {
+            color: inherit;
+            text-decoration: none;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Table of Contents</h1>
+    <div class="grid-container">
+        <!-- Hamburger Menu -->
+        <div>
+            <button id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
 
-        <h2 class="section-title">GPT Brainstorming Sections</h2>
-        <ul class="list-group">
-            <li class="list-group-item">
-                <a href="ml/brainstorming/awsenvmanagement.html">AWS Environment Management</a>
-            </li>
-            <li class="list-group-item">
-                <a href="ml/brainstorming/awslambdafunction.html">AWS Lambda Functions</a>
-            </li>
-            <li class="list-group-item">
-                <a href="ml/brainstorming/awsapigateway.html">Advanced API Gateway Management</a>
-            </li>
-        </ul>
+        <!-- Side Navigation -->
+        <div class="bg-light p-3" id="toc-nav">
+            <h4>Table of Contents</h4>
+            <ul class="list-unstyled">
+                <li class="level-1">
+                    <span class="toggle-icon"><i class="fas fa-plus"></i></span>
+                    <a href="#" class="section-toggle">GPT Brainstorming Sections</a>
+                    <ul class="list-unstyled pl-3" style="display: none;">
+                        <li class="level-2"><a href="ml/brainstorming/awsenvmanagement.html" class="load-content">AWS
+                                Environment Management</a></li>
+                        <li class="level-2"><a href="ml/brainstorming/awslambdafunction.html" class="load-content">AWS
+                                Lambda Functions</a></li>
+                        <li class="level-2"><a href="ml/brainstorming/awsapigateway.html" class="load-content">Advanced
+                                API Gateway Management</a></li>
+                    </ul>
+                </li>
+                <li class="level-1">
+                    <span class="toggle-icon"><i class="fas fa-plus"></i></span>
+                    <a href="#" class="section-toggle">AI Generated Articles</a>
+                    <ul class="list-unstyled pl-3" style="display: none;">
+                        <li class="level-2"><a href="ml/AIArticles/MentalHealth/mh.html" class="load-content">Mental
+                                Health</a></li>
+                        <li class="level-2"><a href="ml/AIArticles/AI/ai.html" class="load-content">AI Advancements</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="level-1">
+                    <span class="toggle-icon"><i class="fas fa-plus"></i></span>
+                    <a href="#" class="section-toggle">Machine Learning Articles</a>
+                    <ul class="list-unstyled pl-3" style="display: none;">
+                        <li class="level-2"><a href="ml/index.html" class="load-content">Neural Networks in NLP</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
 
-        <h2 class="section-title">AI Generated Articles</h2>
-        <ul class="list-group">
-            <li class="list-group-item">
-                <a href="ml/AIArticles/tableofcontent.html">Research Crew</a>
-            </li>
-        </ul>
-
-        <h2 class="section-title">Machine Learning Articles</h2>
-        <ul class="list-group">
-            <li class="list-group-item">
-                <a href="ml/index.html">Neural Networks in NLP</a>
-            </li>
-
-        </ul>
+        <!-- Main Content -->
+        <div class="toc-row"></div>
+        <div id="main-content" class="p-4">
+            <h1>Welcome to AI Articles</h1>
+            <p>Select an article or topic from the left navigation to view content here.</p>
+        </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            // Toggle the side navigation visibility when clicking the hamburger menu
+            $('#hamburger-menu').click(function () {
+                $('#toc-nav').toggleClass('visible');
+                if ($('#toc-nav').hasClass('visible')) {
+                    $('#hamburger-menu').hide();
+                }
+            });
+
+            // Close the side navigation when clicking outside of it
+            $(document).click(function (event) {
+                if (!$(event.target).closest('#toc-nav, #hamburger-menu').length && $('#toc-nav').hasClass('visible')) {
+                    $('#toc-nav').removeClass('visible');
+                    $('#hamburger-menu').show();
+                }
+            });
+
+            // Expand/collapse navigation sections with toggle icon
+            $('.toggle-icon, .section-toggle').click(function (e) {
+                e.preventDefault();
+                const $toggleIcon = $(this).closest('li').find('.toggle-icon i');
+                $(this).closest('li').find('ul').first().toggle();
+                if ($toggleIcon.hasClass('fa-plus')) {
+                    $toggleIcon.removeClass('fa-plus').addClass('fa-minus');
+                } else {
+                    $toggleIcon.removeClass('fa-minus').addClass('fa-plus');
+                }
+            });
+
+            // Load content dynamically into main content area
+            $('.load-content').click(function (e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                $('#main-content').html('<p>Loading...</p>');
+                $('#main-content').load(url, function (response, status, xhr) {
+                    if (status == "error") {
+                        $('#main-content').html('<p>Error loading content. Please try again later.</p>');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

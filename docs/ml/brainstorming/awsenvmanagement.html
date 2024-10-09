@@ -7,6 +7,7 @@
     <title>AWS Environment Management Best Practices</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="container mt-4">
@@ -33,9 +34,22 @@
                         permissions.
                     </li>
                     <li><strong>Lambda Functions:</strong> Each environment should have separate versions of Lambda
-                        functions managed through aliases (<code>dev</code>, <code>staging</code>, <code>testing</code>,
+                        functions managed through aliases<span class="alias-info"
+                            style="cursor: pointer; color: rgb(171, 205, 49); display: inline-flex; align-items: center;"
+                            onclick="toggleAliasInfo()">
+                            <span
+                                style="width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid rgb(96, 7, 81); margin-left: 5px;"></span>
+                        </span> (<code>dev</code>, <code>staging</code>, <code>testing</code>,
                         <code>prod</code>). This ensures easy control over which version is deployed to each
                         environment.
+
+                        <div id="aliasInfo"
+                            style="display: none; background-color: #f9f9f9; border: 1px solid #ccc; padding: 10px; margin-top: 5px;">
+                            <strong>Lambda Aliases:</strong> A Lambda alias is a pointer to a specific version of a
+                            Lambda function. It allows you to create separate environments (e.g., dev, staging, prod)
+                            by pointing different aliases to different versions. This enables smooth transitions during
+                            deployments without directly modifying the function.
+                        </div>
                     </li>
                     <li><strong>API Gateway Stages:</strong> Use different API Gateway stages (e.g., <code>dev</code>,
                         <code>staging</code>, <code>prod</code>) to manage environment-specific configurations for your
@@ -88,7 +102,7 @@
     <section class="mb-5" style="margin-bottom: 0;">
         <div class="text-center">
             <img src="../../images/aws_environment_management_diagram.png" alt="AWS Environment Management Diagram"
-                class="img-fluid" style="max-width: 50%; height: auto;">
+                class="img-fluid" style="max-width: 50%; height: auto; ">
             <p class="text-muted">Environment Management Diagram</p>
         </div>
     </section>
@@ -137,8 +151,7 @@
             <li><strong>Simplified Management:</strong> Tagging, naming conventions, and Parameter Store make managing
                 multiple environments more efficient.</li>
             <li><strong>Improved Security and Isolation:</strong> A multi-account strategy, isolated VPCs, and
-                centralized
-                shared services provide better control and simpler permission management.</li>
+                centralized shared services provide better control and simpler permission management.</li>
         </ul>
     </section>
 
@@ -146,13 +159,18 @@
         <h2>Conclusion</h2>
         <p>
             Managing multiple environments in AWS requires careful planning and structuring of resources,
-            configurations,
-            and access control. By utilizing AWS services like Lambda aliases, Parameter Store, CloudFormation,
-            multi-account strategies, API Gateway stages, and IAM policies, you can create a robust setup that allows
-            for efficient development, testing, and deployment, reducing risk and improving the speed of iteration.
+            configurations, and access control. By utilizing AWS services like Lambda aliases, Parameter Store,
+            CloudFormation, multi-account strategies, API Gateway stages, and IAM policies, you can create a robust
+            setup that allows for efficient development, testing, and deployment, reducing risk and improving the speed
+            of iteration.
         </p>
     </section>
-    </section>
+
+    <script>
+        function toggleAliasInfo() {
+            $('#aliasInfo').toggle();
+        }
+    </script>
 </body>
 
 </html>

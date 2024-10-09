@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Environment Management Best Practices</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+
+<body class="container mt-4">
+    <h1>AWS Environment Management Best Practices</h1>
+
+    <section class="mb-5">
+        <h2>Introduction</h2>
+        <p>
+            To effectively manage different environments (development, staging, testing, and production) across all
+            services in our AWS solution, it is essential to have a structured approach for environment separation and
+            lifecycle management. This helps ensure each environment is isolated, with its own configurations, data, and
+            access control, which allows for controlled development, testing, and deployment cycles.
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h2>Key Strategies for Managing Environments in AWS</h2>
+        <ol>
+            <li><strong>Use Environment-Specific AWS Resources:</strong>
+                <ul>
+                    <li><strong>S3 Buckets:</strong> Create separate S3 buckets for each environment and for each
+                        application (e.g., <code>myapp-dev-bucket</code>, <code>myapp-staging-bucket</code>,
+                        <code>myapp-prod-bucket</code>). This approach allows for easier data management and simpler
+                        permissions.
+                    </li>
+                    <li><strong>Lambda Functions:</strong> Each environment should have separate versions of Lambda
+                        functions managed through aliases (<code>dev</code>, <code>staging</code>, <code>testing</code>,
+                        <code>prod</code>). This ensures easy control over which version is deployed to each
+                        environment.
+                    </li>
+                    <li><strong>API Gateway Stages:</strong> Use different API Gateway stages (e.g., <code>dev</code>,
+                        <code>staging</code>, <code>prod</code>) to manage environment-specific configurations for your
+                        API endpoints.
+                    </li>
+                    <li><strong>DynamoDB Tables or RDS Instances:</strong> Maintain separate tables or instances for
+                        each
+                        environment to ensure data consistency and avoid conflicts.
+                    </li>
+                </ul>
+            </li>
+            <li><strong>Environment Tagging:</strong> Use AWS tags to label resources by environment and application
+                (e.g., <code>Environment: Dev</code>, <code>Application: MyApp</code>). Tags help in easy identification
+                and management of resources as they grow in number.
+            </li>
+            <li><strong>Infrastructure as Code (IaC):</strong> Use tools like AWS CloudFormation or Terraform to define
+                and create environment-specific infrastructure. Parameterize the stack to accept environment inputs for
+                reusable templates. Consider using AWS Cloud Development Kit (CDK) for more flexible, code-driven
+                infrastructure management.
+            </li>
+            <li><strong>Environment Configuration Using Parameter Store or Secrets Manager:</strong> Use AWS Systems
+                Manager Parameter Store or Secrets Manager to store environment-specific configurations such as database
+                connection strings, API keys, and S3 bucket names.
+            </li>
+            <li><strong>Naming Conventions:</strong> Use consistent naming conventions for AWS resources to distinguish
+                different environments easily (e.g., S3 Buckets: <code>myapp-dev-bucket</code>, Lambda Functions:
+                <code>myapp-function-dev</code>).
+            </li>
+            <li><strong>Isolated VPCs:</strong> Set up separate VPCs for each environment to ensure network isolation.
+                Use AWS Transit Gateway for better scalability and secure interconnectivity between VPCs if needed.
+            </li>
+            <li><strong>Deployment Pipelines with Separate Stages:</strong> Set up CI/CD pipelines using AWS
+                CodePipeline
+                or another CI/CD tool. Use canary deployments and blue/green deployments through CodeDeploy to minimize
+                risk during production releases.
+            </li>
+            <li><strong>Access Control:</strong> Restrict access to different environments using IAM policies. Use AWS
+                Identity Center for centralized access management.
+            </li>
+            <li><strong>Multi-Account Strategy:</strong> Use multiple AWS accounts to isolate environments effectively
+                (e.g., separate accounts for development, staging, production). Manage accounts with AWS Organizations
+                and AWS Control Tower.
+            </li>
+            <li><strong>Centralized Shared Services:</strong> Create a shared services account for common resources like
+                logging, monitoring, and backups to simplify cross-environment management.
+            </li>
+        </ol>
+    </section>
+
+    <section class="mb-5" style="margin-bottom: 0;">
+        <div class="text-center">
+            <img src="../../images/aws_environment_management_diagram.png" alt="AWS Environment Management Diagram"
+                class="img-fluid" style="max-width: 50%; height: auto;">
+            <p class="text-muted">Environment Management Diagram</p>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h2>Defining Environment Lifecycle for AWS Services</h2>
+        <ol>
+            <li><strong>Development (`dev`):</strong>
+                <ul>
+                    <li>Frequent deployments, experimentation, and feature additions.</li>
+                    <li>Use <code>$LATEST</code> for Lambda functions to enable quick iterations.</li>
+                    <li>Fewer limitations on resources like DynamoDB and S3 to allow for experimentation.</li>
+                </ul>
+            </li>
+            <li><strong>Testing (`testing`):</strong>
+                <ul>
+                    <li>A stable version of the code is deployed for broader testing, as close to production as
+                        possible.
+                    </li>
+                    <li>Automated tests and integration tests are performed.</li>
+                </ul>
+            </li>
+            <li><strong>Staging (`staging`):</strong>
+                <ul>
+                    <li>Environment is almost identical to production for final verification before deployment.</li>
+                    <li>Useful for performance testing and integration checks.</li>
+                </ul>
+            </li>
+            <li><strong>Production (`prod`):</strong>
+                <ul>
+                    <li>Stable version is deployed for end-users.</li>
+                    <li>Configured with high availability, reliability, and security.</li>
+                    <li>Permissions are tightly controlled, and infrastructure is monitored closely.</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="mb-5">
+        <h2>Benefits of This Approach</h2>
+        <ul>
+            <li><strong>Risk Mitigation:</strong> Segregating resources and environments reduces the risk of accidental
+                changes affecting production.</li>
+            <li><strong>Consistent and Automated Deployments:</strong> Using IaC ensures consistency and reduces human
+                errors.</li>
+            <li><strong>Simplified Management:</strong> Tagging, naming conventions, and Parameter Store make managing
+                multiple environments more efficient.</li>
+            <li><strong>Improved Security and Isolation:</strong> A multi-account strategy, isolated VPCs, and
+                centralized
+                shared services provide better control and simpler permission management.</li>
+        </ul>
+    </section>
+
+    <section class="mb-5">
+        <h2>Conclusion</h2>
+        <p>
+            Managing multiple environments in AWS requires careful planning and structuring of resources,
+            configurations,
+            and access control. By utilizing AWS services like Lambda aliases, Parameter Store, CloudFormation,
+            multi-account strategies, API Gateway stages, and IAM policies, you can create a robust setup that allows
+            for efficient development, testing, and deployment, reducing risk and improving the speed of iteration.
+        </p>
+    </section>
+    </section>
+</body>
+
+</html>

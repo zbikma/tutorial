@@ -62,8 +62,12 @@
                 function handle, so that handle can be defined anywhere as long as you set the Handler property of
                 Runtime Settings of your Lambda Function. By default, when you create a Lambda Function, the class that
                 contains the handler has the same name as your function. For more details, check out <a
+<<<<<<< HEAD
                     href="awslambdafunction.html">How To Create Lambda Function</a>.
                 Thus, if your backend is Python and
+=======
+                    href="ml/brainstorming/awslambdafunction.html">How To Create Lambda Function</a>. Thus, if your backend is Python and
+>>>>>>> refs/remotes/origin/main
                 using Flask, then your handler will be in the app.py file because that is where you define your routes.
                 You would also need a way of parsing URI and handling routes in there.</li>
             <li>If all the routes of my web app are handled by only one Lambda function, scaling becomes complex. To
@@ -110,17 +114,17 @@ aws lambda create-alias \
             page, probably at the top right, you will see 'Create API'. Choose "Create API" and select the appropriate
             type, either HTTP or REST, depending on your use case. Give your API a name and a description that clearly
             reflects its purpose. This will help you and your team keep things organized as your API evolves.</p>
-        <img src="../../images/aws_apigateway_screenshot.png" alt="API Gateway Console Screenshot"
+        <img src="images/aws_apigateway_screenshot.png" alt="API Gateway Console Screenshot"
             style="max-width:100%; height:auto; margin-top:15px;">
         <p>For this blog post, I created an HTTP API, and in a later post, where we need to deliver the integration
             feature in our web app, we will define REST APIs. I named the API 'demo'. Below are the screenshots of each
             step. I integrated with the Lambda function MyTestFunction for two aliases I defined in the Lambda: dev and
             prod. You would need to type the ending manually as you would only see the ARN of the function, not the
             alias.</p>
-        <img src="../../images/backend_service_specification1.png"
+        <img src="images/backend_service_specification1.png"
             alt="Specify the backend service that your API will communicate with"
             style="max-width:100%; height:auto; margin-top:15px;">
-        <img src="../../images/backend_service_specification.png"
+        <img src="images/backend_service_specification.png"
             alt="Specify the backend service that your API will communicate with"
             style="max-width:100%; height:auto; margin-top:15px;">
     </section>
@@ -140,7 +144,7 @@ aws lambda create-alias \
             to define a method to GET the decks of FlashCards. I will also have a <code>/user</code> resource for user
             registration, allowing users to create a customizable account. Therefore, I need to provide a method for
             registration via HTTP, which is a POST method.</p>
-        <img src="../../images/SetupRoutes.png" alt="Use API stages for handling different environments"
+        <img src="images/SetupRoutes.png" alt="Use API stages for handling different environments"
             style="max-width:100%; height:auto; margin-top:15px;">
     </section>
 
@@ -157,7 +161,7 @@ aws lambda create-alias \
             for fine-tuning based on the environment. For example, in a <code>dev</code> stage, you might want to enable
             detailed logging to help with debugging, while in <code>prod</code>, you could have caching enabled for
             better performance.</p>
-        <img src="../../images/defineStages.png" alt="Use API stages for handling different environments"
+        <img src="images/defineStages.png" alt="Use API stages for handling different environments"
             style="max-width:100%; height:auto; margin-top:15px;">
     </section>
 

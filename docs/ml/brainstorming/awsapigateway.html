@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced API Gateway Management</title>
+    <title>How to Setup API Gateway in AWS with Staging for Versioning</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../css/styles.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-W6SDPLXGZW"></script>
@@ -19,95 +19,201 @@
         {
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "name": "Advanced API Gateway Management",
-            "description": "A comprehensive guide on managing AWS API Gateway, including retrieving API IDs and best practices for staging.",
+            "name": "How to Setup API Gateway in AWS with Staging for Versioning",
+            "description": "A comprehensive guide on setting up AWS API Gateway with stages for versioning and handling multiple environments.",
             "author": {
                 "@type": "Person",
                 "name": "Zeinab Mazadi"
             },
             "mainEntity": {
                 "@type": "Article",
-                "headline": "Advanced API Gateway Management",
-                "articleBody": "AWS API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. This article delves into retrieving API IDs and the best practices for staging in API Gateway, providing a detailed explanation suitable for advanced users."
+                "headline": "How to Setup API Gateway in AWS with Staging for Versioning",
+                "articleBody": "This guide explains how to set up AWS API Gateway, including managing multiple environments with staging and best practices."
             }
         }
-        </script>
+    </script>
 </head>
 
 <body class="container mt-4">
-    <h1>Advanced Management of AWS API Gateway</h1>
+    <h1>Setting up AWS API Gateway with Stages</h1>
 
     <section class="mb-5">
         <h2>Introduction</h2>
-        <p>
-            AWS API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain,
-            monitor, and secure APIs at any scale. This article delves into retrieving API IDs and the best practices
-            for staging in API Gateway, providing a detailed explanation suitable for advanced users.
+        <p>Setting up an API Gateway in AWS can feel daunting, especially when it comes to managing different versions
+            and environments efficiently. In this guide, I will walk through how to set up API Gateway in AWS and
+            leverage stages for versioning and handling multiple environments like development, staging, and production.
+            Although it might seem straightforward, I struggled to find a comprehensive document that fully addressed my
+            requirements, so I'm documenting my experience here.</p>
+    </section>
+
+    <section class="mb-5">
+        <h2>Problem</h2>
+        <p>The problem I was trying to solve is that I am working on a serverless web app to teach myself as many AWS
+            services as I could. Since I was going to do a lot of testing and experimenting in development, I needed to
+            ensure that I have a separate environment so I can easily experiment without breaking things.</p>
+
+        <p>Since I was building a serverless app and wanted to use AWS Lambda, I decided to use API Gateway to connect
+            the backend to the frontend. As an API designer, you want to ensure routes are well defined and secure to
+            maintain data integrity for integrated systems.</p>
+
+        <p>After a lot of research, here is what I learned:</p>
+        <ul>
+            <li>You can have one AWS Lambda function that handles the whole web app for you. Lambda is just a
+                function handle, so that handle can be defined anywhere as long as you set the Handler property of
+                Runtime Settings of your Lambda Function. By default, when you create a Lambda Function, the class that
+                contains the handler has the same name as your function. For more details, check out <a
+                    href="link_to_html_page">How To Create Lambda Function</a>. Thus, if your backend is Python and
+                using Flask, then your handler will be in the app.py file because that is where you define your routes.
+                You would also need a way of parsing URI and handling routes in there.</li>
+            <li>If all the routes of my web app are handled by only one Lambda function, scaling becomes complex. To
+                address this, I decided to have Lambda functions logically grouped, for instance, one for authentication
+                purposes, one for handling flashcards, some for integration, and so on.</li>
+            <li>To manage different versions of my functions, I used Aliases for AWS Lambda. An alias represents a
+                snapshot of the function and its configuration, including environment-specific variables, allowing me to
+                control versions between development and production environments effectively.</li>
+        </ul>
+    </section>
+
+    <section class="mb-5">
+        <h2>API Gateway</h2>
+        <p>This is the place where you integrate routes with your backend Lambda functions. Below are the AWS CLI
+            commands to create a Lambda function with two aliases:</p>
+
+        <pre><code># Create the Lambda function
+aws lambda create-function \
+  --function-name MyFunction \
+  --runtime python3.8 \
+  --role arn:aws:iam::123456789012:role/service-role/MyLambdaRole \
+  --handler lambda_function.lambda_handler \
+  --zip-file fileb://function.zip
+
+# Publish a version of the function
+aws lambda publish-version --function-name MyFunction
+
+# Create the "prod" alias pointing to version 1
+aws lambda create-alias \
+  --function-name MyFunction \
+  --name prod \
+  --function-version 1
+
+# Create the "dev" alias pointing to the latest version
+aws lambda create-alias \
+  --function-name MyFunction \
+  --name dev \
+  --function-version 1</code></pre>
+    </section>
+
+    <section class="mb-5">
+        <h2>Step 1: Create Your API in API Gateway</h2>
+        <p>To begin, log in to the AWS Management Console and navigate to the API Gateway service. Somewhere on the
+            page, probably at the top right, you will see 'Create API'. Choose "Create API" and select the appropriate
+            type, either HTTP or REST, depending on your use case. Give your API a name and a description that clearly
+            reflects its purpose. This will help you and your team keep things organized as your API evolves.</p>
+        <img src="../../images/aws_apigateway_screenshot.png" alt="API Gateway Console Screenshot"
+            style="max-width:100%; height:auto; margin-top:15px;">
+        <p>For this blog post, I created an HTTP API, and in a later post, where we need to deliver the integration
+            feature in our web app, we will define REST APIs. I named the API 'demo'. Below are the screenshots of each
+            step. I integrated with the Lambda function MyTestFunction for two aliases I defined in the Lambda: dev and
+            prod. You would need to type the ending manually as you would only see the ARN of the function, not the
+            alias.</p>
+        <img src="../../images/backend_service_specification1.png"
+            alt="Specify the backend service that your API will communicate with"
+            style="max-width:100%; height:auto; margin-top:15px;">
+        <img src="../../images/backend_service_specification.png"
+            alt="Specify the backend service that your API will communicate with"
+            style="max-width:100%; height:auto; margin-top:15px;">
+    </section>
+
+    <section class="mb-5">
+        <h2>Step 2: Define Resources and Methods</h2>
+        <p>After creating your API, it's time to define the resources and methods that make up the endpoints of your
+            application. This step is crucial because it lays the foundation for how your API will interact with
+            clients. You can think of resources as the nouns and methods as the verbs that describe actions to be
+            performed. For instance, <code>/users</code> could be a resource, and actions like GET or POST are methods
+            that interact with that resource.</p>
+
+        <p>Resources are essentially paths or endpoints of your API, like <code>/users</code> or <code>/orders</code>.
+            For each resource, add methods such as GET, POST, PUT, or DELETE, which correspond to the operations you
+            want to perform. The console provides an intuitive interface to add and configure these methods.</p>
+        <p>For instance, in my FlashCard app, I have a resource which is the <code>/FlashCards</code> deck, and I need
+            to define a method to GET the decks of FlashCards. I will also have a <code>/user</code> resource for user
+            registration, allowing users to create a customizable account. Therefore, I need to provide a method for
+            registration via HTTP, which is a POST method.</p>
+        <img src="../../images/SetupRoutes.png" alt="Use API stages for handling different environments"
+            style="max-width:100%; height:auto; margin-top:15px;">
+    </section>
+
+    <section class="mb-5">
+        <h2>Step 3: Set Up Stages for Versioning</h2>
+        <p>AWS API Gateway uses "stages" to help you manage multiple environments or versions of your API. Stages are
+            essentially snapshots of your API at a given point in time. To create a stage, go to the "Stages" section
+            under your API, click "Create Stage," and give it a meaningful name like <code>dev</code>,
+            <code>staging</code>, or <code>prod</code>.
+        </p>
+        <p>By default, all HTTP APIs created through the console have a stage named $default. Since I didn't need it, I
+            deleted it.</p>
+        <p>Each stage can have its own configuration, such as logging, caching, and throttling settings, which allows
+            for fine-tuning based on the environment. For example, in a <code>dev</code> stage, you might want to enable
+            detailed logging to help with debugging, while in <code>prod</code>, you could have caching enabled for
+            better performance.</p>
+        <img src="../../images/defineStages.png" alt="Use API stages for handling different environments"
+            style="max-width:100%; height:auto; margin-top:15px;">
+    </section>
+
+    <section class="mb-5">
+        <h2>Step 4: Deploy Your API to a Stage</h2>
+        <p>Once you've configured your API, you need to deploy it to a specific stage. Deployment in API Gateway is the
+            process of taking the current state of your API and making it accessible under a specific URL associated
+            with the stage. Click "Deploy API," select the stage (e.g., <code>staging</code>), and provide a deployment
+            description to keep track of what changes are being deployed.</p>
+    </section>
+
+    <section class="mb-5">
+        <h2>Step 5: Handle Multiple Versions of Your API</h2>
+        <p>As your API evolves, you may need to make breaking changes. Instead of modifying the existing version, you
+            can create a new version of your API by copying it and then deploying it to a new stage, like
+            <code>v2</code>. This approach ensures that existing consumers of your API are not affected by the changes,
+            while allowing new consumers to use the updated version.
         </p>
     </section>
 
     <section class="mb-5">
-        <h2>Retrieving API IDs</h2>
-        <p>To interact with an API in AWS API Gateway, especially when automating tasks or integrating with other AWS
-            services, you need to know the API ID. Here’s how to retrieve it:</p>
-        <ol>
-            <li><strong>Using AWS Management Console:</strong>
-                <ul>
-                    <li>Log in to the AWS Management Console.</li>
-                    <li>Navigate to the API Gateway service.</li>
-                    <li>Select your API. The API ID is displayed on the dashboard for the selected API.</li>
-                </ul>
-            </li>
-            <li><strong>Using AWS CLI:</strong>
-                <p>You can also retrieve the API ID using the AWS Command Line Interface.</p>
-                <pre><code>aws apigateway get-rest-apis</code></pre>
-                <p>This command lists all your APIs along with their IDs.</p>
-            </li>
-        </ol>
+        <h2>Step 6: Utilize Stage Variables</h2>
+        <p>AWS API Gateway allows you to use stage variables, which are key-value pairs associated with a stage. These
+            can be used to manage environment-specific settings, like connecting to different databases or services in
+            each stage. For instance, a <code>dev</code> stage variable might point to a test database, while
+            <code>prod</code> points to a live database.
+        </p>
     </section>
 
     <section class="mb-5">
-        <h2>Staging and Best Practices for API Gateway</h2>
-        <p>Stages in AWS API Gateway represent different environments (like development, testing, production) for an
-            API. Managing stages effectively is crucial for controlled deployments and version management.</p>
-        <ol>
-            <li><strong>Creating and Managing Stages:</strong>
-                <p>You create a stage when you deploy an API. Here’s how to manage stages:</p>
-                <ul>
-                    <li>Use stage variables to manage environment-specific configurations.</li>
-                    <li>Monitor stage performance and errors with CloudWatch integration.</li>
-                    <li>Control traffic with throttling settings to avoid API rate limits and ensure smooth operation
-                        under high load.</li>
-                </ul>
-            </li>
-            <li><strong>Using Stage Variables:</strong>
-                <p>Stage variables are key-value pairs used to manage configuration data. For example, you can use stage
-                    variables to specify different database endpoints for development and production environments.</p>
-                <pre><code>{
-  "stageVariables": {
-    "devDb": "dev-database-url",
-    "prodDb": "prod-database-url"
-  }
-}</code></pre>
-            </li>
-            <li><strong>Best Practices:</strong>
-                <ul>
-                    <li>Regularly update and review stage configurations to reflect changes in your API.</li>
-                    <li>Use canary release deployments to test new features in production with limited traffic.</li>
-                    <li>Implement caching to improve response times and reduce the number of calls to your backend
-                        services.</li>
-                </ul>
-            </li>
-        </ol>
+        <h2>Step 7: Test Your Setup</h2>
+        <p>After deploying your API to different stages, make sure to test each stage thoroughly. AWS provides built-in
+            testing tools within the API Gateway console, but you can also use tools like Postman or cURL to validate
+            that your endpoints are working as expected for each environment.</p>
+    </section>
+
+    <section class="mb-5">
+        <h2>Best Practices for Staging</h2>
+        <ul>
+            <li><strong>Keep Environment-Specific Configurations Separate:</strong> Use stage variables and IAM roles to
+                ensure that configurations are isolated between environments.</li>
+            <li><strong>Automate Deployments:</strong> Use CI/CD tools like AWS CodePipeline to automate deployments to
+                different stages, minimizing manual intervention and errors.</li>
+            <li><strong>Monitor Each Stage Separately:</strong> Enable CloudWatch metrics for each stage to get detailed
+                insights into usage patterns, errors, and performance, allowing you to catch issues before they impact
+                end users.</li>
+        </ul>
     </section>
 
     <section class="mb-5">
         <h2>Conclusion</h2>
-        <p>
-            Effectively managing your API through AWS API Gateway and understanding the details like API IDs and staging
-            strategies are crucial for the scalability and robustness of your application. This guide provides an
-            advanced overview suitable for developers looking to leverage AWS API Gateway to its fullest potential.
-        </p>
+        <p>Setting up API Gateway stages in AWS allows you to efficiently manage multiple versions and environments for
+            your API, ensuring smooth development and deployment workflows. By using stages, deployment becomes more
+            structured, and you can easily roll out updates without disrupting existing services.</p>
+
+        <p>In the next post, we’ll dive deeper into setting up CI/CD for API Gateway using AWS CodePipeline to further
+            streamline the deployment process.</p>
     </section>
 </body>
 

@@ -63,10 +63,13 @@
                 Runtime Settings of your Lambda Function. By default, when you create a Lambda Function, the class that
                 contains the handler has the same name as your function. For more details, check out <a
                     href="ml/brainstorming/awslambdafunction.html">How To Create Lambda Function</a>. Thus, if your
-                backend is Python and
-
-                using Flask, then your handler will be in the app.py file because that is where you define your routes.
+                backend is Python and using Flask, then your handler will be in the app.py file because that is where
+                you define your routes.
                 You would also need a way of parsing URI and handling routes in there.</li>
+
+            <img src="images/lambdaHandler.png" alt="set lambda handler"
+                style="max-width:100%; height:auto; margin-top:15px;">
+
             <li>If all the routes of my web app are handled by only one Lambda function, scaling becomes complex. To
                 address this, I decided to have Lambda functions logically grouped, for instance, one for authentication
                 purposes, one for handling flashcards, some for integration, and so on.</li>

@@ -10,16 +10,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        .level-1 {
-            color: #1f77b4;
-        }
-
-        .level-2 {
-            color: #ff7f0e;
-        }
-
-        .level-3 {
-            color: #2ca02c;
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+            overflow: auto;
         }
 
         #hamburger-menu {
@@ -44,45 +41,88 @@
             position: fixed;
             top: 0;
             left: -300px;
-            /* Initially hidden off-screen */
             height: 100%;
             width: 300px;
-            background-color: #f8f9fa;
+            background-color: rgba(255, 255, 255, 0.1);
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             padding: 20px;
             padding-top: 60px;
             z-index: 999;
+            backdrop-filter: blur(5px);
             transition: left 0.5s ease;
-            /* Smooth animation for sliding */
         }
 
         #toc-nav.visible {
             left: 0;
-            /* When visible, bring to view */
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: auto 1fr 3fr;
-            grid-template-rows: auto 1fr;
-            gap: 10px;
-            margin-top: 60px;
+        #toc-nav ul {
+            list-style-type: none;
+            padding: 0;
         }
 
-        .grid-container .toc-row {
-            grid-column: 1 / span 2;
+        #toc-nav ul li {
+            margin: 10px 0;
         }
 
-        .toggle-icon {
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .level-1 a,
-        .level-2 a,
-        .level-3 a {
-            color: inherit;
+        #toc-nav ul li a {
             text-decoration: none;
+            color: #4b0082;
+            font-weight: bold;
+        }
+
+        #toc-nav h4 {
+            color: #4b0082;
+        }
+
+        #toc-nav .toggle-icon i {
+            color: #4b0082;
+        }
+
+        #main-content {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 2s ease;
+            position: relative;
+            max-width: 600px;
+            margin: 80px auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            color: #4b0082;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
     </style>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-W6SDPLXGZW"></script>
@@ -127,7 +167,7 @@
                 ]
             }
         }
-        </script>
+    </script>
 
 </head>
 
@@ -195,7 +235,9 @@
             $('#hamburger-menu').click(function () {
                 $('#toc-nav').toggleClass('visible');
                 if ($('#toc-nav').hasClass('visible')) {
-                    $('#hamburger-menu').hide();
+                    $('#hamburger-menu').css('left', '320px');
+                } else {
+                    $('#hamburger-menu').css('left', '20px');
                 }
             });
 
@@ -203,7 +245,7 @@
             $(document).click(function (event) {
                 if (!$(event.target).closest('#toc-nav, #hamburger-menu').length && $('#toc-nav').hasClass('visible')) {
                     $('#toc-nav').removeClass('visible');
-                    $('#hamburger-menu').show();
+                    $('#hamburger-menu').css('left', '20px');
                 }
             });
 
